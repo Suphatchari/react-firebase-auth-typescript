@@ -1,37 +1,65 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
 import { useUserAuth } from "../context/UserAuthContext";
+import { toast } from "react-toastify";
+import { FirebaseError } from "firebase/app";
 
 function Home() {
-  const { user, logOut } = useUserAuth();
   const navigate = useNavigate();
+  const { user, getUserDetailsFromFirestore, logOut } = useUserAuth();
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
 
   const handleLogout = async () => {
     try {
       await logOut();
+      toast.success("ออกจากระบบสำเร็จ");
       navigate("/");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      console.error("Logout error :", err.message);
+    } catch (err) {
+      const error = err as FirebaseError;
+      toast.error(error.message);
     }
   };
 
   useEffect(() => {
+    let isMounted = true; // Track if the component is mounted
+
     if (!user) {
-      // If user is not logged in, redirect to login page
       navigate("/login");
+      return;
     }
-  }, [user, navigate]); // Dependency array includes user and navigate
+
+    getUserDetailsFromFirestore(user.uid).then((data) => {
+      if (!isMounted) return;
+
+      if (!data) {
+        toast.error("ไม่พบข้อมูลผู้ใช้ใน Firestore");
+        setPhoneNumber(null);
+      } else {
+        setPhoneNumber(data.phone);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user, navigate, getUserDetailsFromFirestore]);
 
   return (
-    <div className="text-center">
+    <div className="text-center mt-5">
       <h2 className="w-100 fw-bold mb-3">Home</h2>
-      <p>Hi, {user?.email}</p>
+      <p>Hi!!, {user?.displayName ? user?.displayName : "-"}</p>
+      <p>
+        <b>อีเมล : </b>
+        {user?.email || "-"}
+      </p>
+      <p>
+        <b>เบอร์โทรศัพท์ : </b>
+        {phoneNumber || "-"}
+      </p>
       <p>
         <b>UID : </b>
-        {user?.uid}
+        {user?.uid || "-"}
       </p>
       <Button variant="danger" className="fw-bold" onClick={handleLogout}>
         Logout
