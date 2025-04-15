@@ -1,66 +1,82 @@
-# React + TypeScript + Vite
+# 🦐 Shrimp Farm Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern web application for shrimp farm management using **React**, **TypeScript**, **Firebase Authentication**, **Firestore**, and **Vite**.
 
-Currently, two official plugins are available:
+This project includes:
+- 🔐 Login & Register with Firebase Auth
+- ☁️ User profile storage in Firestore
+- ✅ Form validation with Formik + Yup
+- 💬 Toast notifications via react-toastify
+- 🔒 Protected Routes with context-based auth
+- ⚡ Fast dev experience with Vite + HMR
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Getting Started
+## 🚀 Getting Started
 
-First, run the development :
+### 1. Clone the repository
+```bash
+git clone https://github.com/your-username/shrimp-farm-web.git
+cd shrimp-farm-web
+```
 
+### 2. Install dependencies
 ```bash
 npm install
-# then
+```
+
+### 3. Run the dev server
+```bash
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) with your browser to see the result.
+Open [http://localhost:5173](http://localhost:5173) to see the app.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🔧 Project Structure
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+src/
+├── auth/                    # Route guards (e.g., ProtectedRoute)
+├── components/              # Main UI pages (Home, Login, Register)
+│   └── forms/               # Formik + Yup forms (LoginForm, RegisterForm)
+├── context/                 # Firebase auth context (UserAuthContext)
+├── firebase.ts              # Firebase SDK init
+├── App.tsx / main.tsx       # Entry point
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🔐 Firebase Setup
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+Ensure you’ve set up a Firebase project and updated your credentials in `src/firebase.ts`. You should enable:
+
+- **Authentication** → Email/Password
+- **Firestore Database** → In test mode (or with rules)
+- **(Optional)** Storage / Hosting if needed
+
+---
+
+## ✅ Linting & Formatting
+
+This project includes ESLint with TypeScript support. You can extend rules by modifying `eslint.config.js`.
+
+```bash
+npm run lint
 ```
+
+---
+
+## 📦 Tech Stack
+
+| Tech             | Used For                         |
+|------------------|----------------------------------|
+| React + Vite     | Frontend framework + dev server  |
+| TypeScript       | Type safety                      |
+| Firebase Auth    | Authentication                   |
+| Firestore        | Cloud database                   |
+| React-Bootstrap  | UI Components                    |
+| Formik + Yup     | Form handling + validation       |
+| React Toastify   | Toast notification system        |
+---

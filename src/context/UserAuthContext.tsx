@@ -1,28 +1,41 @@
 import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-  User,
-} from "firebase/auth";
-import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
   useState,
 } from "react";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  User,
+  UserCredential,
+} from "firebase/auth";
+import { setDoc, doc, getDoc, DocumentData } from "firebase/firestore";
+import { db, auth } from "../firebase";
 
-import { auth } from "../firebase";
+interface SignUpWithUserInformationPayload {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+}
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  logIn: (email: string, password: string) => Promise<unknown>;
-  signUp: (email: string, password: string) => Promise<unknown>;
+  logIn: (email: string, password: string) => Promise<UserCredential>;
+  signUpWithEmail: (email: string, password: string) => Promise<UserCredential>;
+  signUpWithUserInformation: (
+    payload: SignUpWithUserInformationPayload
+  ) => Promise<User>;
+  getUserDetailsFromFirestore: (uid: string) => Promise<DocumentData | null>;
   logOut: () => Promise<void>;
 }
-
 const userAuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface UserAuthContextProviderProps {
@@ -39,8 +52,61 @@ export function UserAuthContextProvider({
     return signInWithEmailAndPassword(auth, email, password);
   }
 
-  function signUp(email: string, password: string) {
+  function signUpWithEmail(email: string, password: string) {
     return createUserWithEmailAndPassword(auth, email, password);
+  }
+
+  async function signUpWithUserInformation({
+    email,
+    password,
+    firstName,
+    lastName,
+    phone,
+  }: SignUpWithUserInformationPayload) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // ✅ Update displayName
+      await updateProfile(user, {
+        displayName: `${firstName} ${lastName}`,
+      });
+
+      // ✅ Save to Firestore database
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email,
+        firstName,
+        lastName,
+        phone,
+        createdAt: new Date(),
+      });
+      return user;
+    } catch (error) {
+      console.error("❌ Error in signUpWithUserInformation :", error);
+      throw error;
+    }
+  }
+
+  async function getUserDetailsFromFirestore(uid: string) {
+    try {
+      const userDocRef = doc(db, "users", uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        return userDocSnap.data();
+      } else {
+        console.warn(`User with UID ${uid} not found in Firestore`);
+        return null;
+      }
+    } catch (error) {
+      console.error("❌ Error fetching user details from Firestore :", error);
+      throw error;
+    }
   }
 
   function logOut() {
@@ -49,7 +115,7 @@ export function UserAuthContextProvider({
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("Auth :", currentUser ? currentUser : "No user logged in");
+      console.log(currentUser ? currentUser : "❌ No user logged in");
       setUser(currentUser);
       setLoading(false); // Set loading to false after checking auth state
     });
@@ -60,7 +126,17 @@ export function UserAuthContextProvider({
   }, []);
 
   return (
-    <userAuthContext.Provider value={{ user, loading, logIn, signUp, logOut }}>
+    <userAuthContext.Provider
+      value={{
+        user,
+        loading,
+        logIn,
+        signUpWithEmail,
+        signUpWithUserInformation,
+        getUserDetailsFromFirestore,
+        logOut,
+      }}
+    >
       {children}
     </userAuthContext.Provider>
   );
