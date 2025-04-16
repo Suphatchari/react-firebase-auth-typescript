@@ -1,11 +1,4 @@
 import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -14,8 +7,25 @@ import {
   User,
   UserCredential,
 } from "firebase/auth";
-import { setDoc, doc, getDoc, DocumentData } from "firebase/firestore";
-import { db, auth } from "../firebase";
+import {
+  collection,
+  doc,
+  DocumentData,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+import { auth, db } from "../firebase";
 
 interface SignUpWithUserInformationPayload {
   email: string;
@@ -34,6 +44,7 @@ interface AuthContextType {
     payload: SignUpWithUserInformationPayload
   ) => Promise<User>;
   getUserDetailsFromFirestore: (uid: string) => Promise<DocumentData | null>;
+  checkDuplicateEmailInFirestore: (email: string) => Promise<boolean>;
   logOut: () => Promise<void>;
 }
 const userAuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -79,7 +90,7 @@ export function UserAuthContextProvider({
       // ✅ Save to Firestore database
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
-        email,
+        email: email.trim().toLowerCase(),
         firstName,
         lastName,
         phone,
@@ -109,6 +120,20 @@ export function UserAuthContextProvider({
     }
   }
 
+  async function checkDuplicateEmailInFirestore(
+    email: string
+  ): Promise<boolean> {
+    try {
+      const q = query(collection(db, "users"), where("email", "==", email));
+      const querySnapshot = await getDocs(q);
+      console.log("checkDuplicateEmailInFirestore :>> ", !querySnapshot.empty);
+      return !querySnapshot.empty; // Returns true if email exists, false otherwise.
+    } catch (error) {
+      console.error("❌ Error checking email existence:", error);
+      return false;
+    }
+  }
+
   function logOut() {
     return signOut(auth);
   }
@@ -134,6 +159,7 @@ export function UserAuthContextProvider({
         signUpWithEmail,
         signUpWithUserInformation,
         getUserDetailsFromFirestore,
+        checkDuplicateEmailInFirestore,
         logOut,
       }}
     >

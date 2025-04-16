@@ -1,10 +1,11 @@
-import { useUserAuth } from "../../context/UserAuthContext";
 import { FirebaseError } from "firebase/app";
 import { Formik } from "formik";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
+
+import { useUserAuth } from "../../context/UserAuthContext";
 
 // 🔐 Yup validation schema
 const loginSchema = Yup.object().shape({
@@ -33,7 +34,12 @@ function LoginForm() {
           navigate("/home");
         } catch (err) {
           const error = err as FirebaseError;
-          toast.error(error.message);
+          // console.log("error.code :>> ", error.code);
+          if (error.code === "auth/invalid-credential") {
+            toast.error("คุณกรอกชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง");
+          } else {
+            toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+          }
         } finally {
           setSubmitting(false);
         }
