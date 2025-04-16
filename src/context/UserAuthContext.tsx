@@ -126,7 +126,7 @@ export function UserAuthContextProvider({
     try {
       const q = query(collection(db, "users"), where("email", "==", email));
       const querySnapshot = await getDocs(q);
-      console.log("checkDuplicateEmailInFirestore :>> ", !querySnapshot.empty);
+      // console.log("checkDuplicateEmailInFirestore :>> ", !querySnapshot.empty);
       return !querySnapshot.empty; // Returns true if email exists, false otherwise.
     } catch (error) {
       console.error("❌ Error checking email existence:", error);
