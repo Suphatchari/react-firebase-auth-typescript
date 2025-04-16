@@ -9,7 +9,7 @@ function Login() {
      * use the following container setup:
      * <div className="container min-vh-100 d-flex align-items-center justify-content-center">
      */
-    <div className="container mt-5">
+    <div className="container my-5">
       <div className="col-md-6 mx-auto border border-1 rounded p-4 shadow">
         <h2 className="w-100 text-center fw-bold mb-3">Login</h2>
         <LoginForm />

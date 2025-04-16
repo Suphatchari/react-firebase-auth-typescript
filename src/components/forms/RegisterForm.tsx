@@ -36,7 +36,7 @@ function RegisterForm() {
           const exists = await checkDuplicateEmailInFirestore(
             value.trim().toLowerCase()
           );
-          return !exists; // ✅ false = ซ้ำ, true = ไม่ซ้ำ
+          return !exists;
         }
       ),
     password: Yup.string()
