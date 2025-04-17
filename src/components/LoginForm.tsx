@@ -4,8 +4,7 @@ import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-
-import { useUserAuth } from "../../context/UserAuthContext";
+import { useUserAuth } from "../context/UserAuthContext";
 
 // 🔐 Yup validation schema
 const loginSchema = Yup.object().shape({

@@ -2,9 +2,9 @@ import { Button } from "react-bootstrap";
 import { BsEmojiFrown } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
-import "./PageNotFound.css";
+import "./NotFound.css";
 
-function PageNotFound() {
+function NotFound() {
   return (
     <div className="page-not-found d-flex flex-column justify-content-center align-items-center text-center px-3">
       <div className="icon-container mb-4">
@@ -24,4 +24,4 @@ function PageNotFound() {
   );
 }
 
-export default PageNotFound;
+export default NotFound;
