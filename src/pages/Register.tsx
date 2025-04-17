@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
+import RegisterForm from "../components/RegisterForm";
 
-import LoginForm from "./forms/LoginForm";
-
-function Login() {
+function Register() {
   return (
     /**
      * To center this layout vertically and horizontally on the screen,
@@ -11,10 +10,10 @@ function Login() {
      */
     <div className="container my-5">
       <div className="col-md-6 mx-auto border border-1 rounded p-4 shadow">
-        <h2 className="w-100 text-center fw-bold mb-3">Login</h2>
-        <LoginForm />
+        <h2 className="w-100 text-center fw-bold mb-3">Register</h2>
+        <RegisterForm />
         <p className="text-center mt-3 small">
-          Don't have an account? <Link to="/register">Register</Link>
+          Already have an account? <Link to="/login">Login</Link>
         </p>
         <p className="text-center mt-3 small">
           <Link to="/">Back to Home</Link>
@@ -24,4 +23,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
