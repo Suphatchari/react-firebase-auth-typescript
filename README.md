@@ -129,29 +129,6 @@ VITE_FIREBASE_MEASUREMENT_ID=...
 
 ---
 
-## 💡 Axios Integration
-
-This project includes Axios pre-configured to use `VITE_API_BASE_URL` from your `.env` file:
-
-```ts
-// services/axios.ts
-import axios from "axios";
-
-const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-});
-
-export default axiosInstance;
-```
-
-Use it to call your backend APIs easily:
-
-```ts
-const response = await axiosInstance.get("/example");
-```
-
----
-
 ## 📚 Inspiration & Credits
 
 ✨ This project was originally inspired by a [YouTube tutorial](https://www.youtube.com/watch?v=x74LZmGmly8) on Firebase Authentication using React.  
