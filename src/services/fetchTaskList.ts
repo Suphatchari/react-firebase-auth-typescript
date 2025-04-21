@@ -1,10 +1,11 @@
 import { toast } from "react-toastify";
-import config from "../config/env";
-import { getOnlyDateString } from "../helpers/date-string-format";
-import { Task, TaskGrouping, TaskList } from "../types/types";
+import config from "@config/env";
+import { getOnlyDateString } from "@helpers/date-string-format";
+import { Task, TaskGrouping, TaskList } from "types";
 import axios from "axios";
 
 /**
+ *
  * @param status The status of the items to retrieve. Allowed values are "TODO", "DOING", and "DONE".
  * @param offset The page number to retrieve.
  * @param limit The Number of items to return in each page.
@@ -43,6 +44,7 @@ export async function fetchTaskList(
 }
 
 /**
+ *
  * @param tasks Array of Task
  * @returns Array of TaskGrouping which comes from dividing Task into groups according to createdAt.
  */
