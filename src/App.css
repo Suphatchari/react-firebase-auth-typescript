@@ -1,7 +1,10 @@
 #root {
+  /* font-family: "Noto Sans Thai", "Noto Sans", sans-serif; */
+  /* line-height: 1.5;
+  font-weight: 400; */
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   /* text-align: center; */
 }
 
