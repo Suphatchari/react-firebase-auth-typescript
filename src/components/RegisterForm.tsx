@@ -1,10 +1,10 @@
+import { useUserAuth } from "@context/UserAuthContext";
 import { FirebaseError } from "firebase/app";
 import { Formik } from "formik";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { useUserAuth } from "../context/UserAuthContext";
 
 function RegisterForm() {
   const { signUpWithUserInformation, checkDuplicateEmailInFirestore } =
@@ -32,10 +32,17 @@ function RegisterForm() {
         "อีเมลนี้ถูกใช้งานแล้ว",
         async function (value) {
           if (!value) return true;
-          const exists = await checkDuplicateEmailInFirestore(
-            value.trim().toLowerCase()
-          );
-          return !exists;
+          try {
+            const exists = await checkDuplicateEmailInFirestore(
+              value.trim().toLowerCase()
+            );
+            return !exists;
+          } catch (error) {
+            console.error("❌ ไม่สามารถตรวจสอบอีเมลซ้ำได้ :", error);
+            return this.createError({
+              message: "ไม่สามารถตรวจสอบอีเมลได้ กรุณาลองใหม่",
+            });
+          }
         }
       ),
     password: Yup.string()

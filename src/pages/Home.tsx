@@ -1,38 +1,49 @@
-import { Task } from "../types/types";
 import { FirebaseError } from "firebase/app";
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { useUserAuth } from "../context/UserAuthContext";
-import { getDateWithTimeTHString } from "../helpers/date-string-format";
-import { fetchTaskList } from "../services/fetchTaskList";
+import { fetchTaskList } from "@services/fetchTaskList";
+import { useUserAuth } from "@context/UserAuthContext";
+import { getDateWithTimeTHString } from "@helpers/date-string-format";
+import { Task } from "types";
+import Loading from "@components/Loading";
+import SectionLine from "@components/SectionLine";
 
 function Home() {
   const navigate = useNavigate();
   const { user, getUserDetailsFromFirestore, logOut } = useUserAuth();
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const [isLoadingTask, setIsLoadingTask] = useState<boolean>(true);
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
-    let isMounted = true; // Track if the component is mounted
+    let isMounted = true;
 
-    if (!user) {
-      navigate("/login");
-      return;
+    async function fetchUserDetails() {
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const data = await getUserDetailsFromFirestore(user.uid);
+        if (!isMounted) return;
+
+        if (!data) {
+          toast.error("ไม่พบข้อมูลผู้ใช้ใน Firestore");
+          setPhoneNumber(null);
+        } else {
+          setPhoneNumber(data.phone);
+        }
+      } catch (err) {
+        toast.error("เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้");
+        console.error("❌ Error fetching user details :", err);
+      }
     }
 
-    getUserDetailsFromFirestore(user.uid).then((data) => {
-      if (!isMounted) return;
-
-      if (!data) {
-        toast.error("ไม่พบข้อมูลผู้ใช้ใน Firestore");
-        setPhoneNumber(null);
-      } else {
-        setPhoneNumber(data.phone);
-      }
-    });
+    fetchUserDetails();
 
     return () => {
       isMounted = false;
@@ -41,16 +52,20 @@ function Home() {
 
   useEffect(() => {
     if (tasks.length === 0) {
-      // toast.dismiss();
-      // toast.info("Loading tasks...");
       loadTasks();
     }
   }, [tasks.length]);
 
   const loadTasks = async () => {
+    setIsLoadingTask(true);
+
+    // ------------------------------------------------------------------------------------
+    // ⚠️ Simulate delay to showcase loading spinner effect (for demo/testing only)
+    // ❗️TODO: Remove this delay in production
     const delay = (ms: number) =>
       new Promise((resolve) => setTimeout(resolve, ms));
     await delay(1000);
+    // ------------------------------------------------------------------------------------
 
     try {
       const newTaskList = await fetchTaskList("TODO", 1, 10, "createdAt", true);
@@ -61,6 +76,8 @@ function Home() {
     } catch (error) {
       toast.error("เกิดข้อผิดพลาดในการโหลดงาน");
       console.error("❌ loadMoreTasks error:", error);
+    } finally {
+      setIsLoadingTask(false);
     }
   };
 
@@ -76,7 +93,7 @@ function Home() {
   };
 
   return (
-    <div className="text-center mt-5">
+    <div className="text-center my-5">
       <h2 className="w-100 fw-bold mb-3">Home</h2>
       <p>Hi!!, {user?.displayName ? user?.displayName : "-"}</p>
       <p>
@@ -91,14 +108,15 @@ function Home() {
         <b>UID : </b>
         {user?.uid || "-"}
       </p>
-      <Button variant="danger" className="fw-bold" onClick={handleLogout}>
-        Logout
-      </Button>
 
-      {tasks.length > 0 && (
-        <div className="mt-5 container">
-          <h4 className="mb-3">📋 รายการงานที่ต้องทำ (TODO)</h4>
-          <h6 className="mb-3">***Call api example***</h6>
+      <div className="mb-3 container">
+        <SectionLine />
+        <h4 className="mb-3">📋 TODO List</h4>
+        <p className="mb-3 small">*** API Request Demo ***</p>
+
+        {isLoadingTask ? (
+          <Loading />
+        ) : tasks.length > 0 ? (
           <table className="table table-bordered table-striped">
             <thead className="table-dark">
               <tr>
@@ -114,17 +132,22 @@ function Home() {
                   <td>{index + 1}</td>
                   <td>{task.title}</td>
                   <td>{task.description}</td>
-                  <td>
-                    {/* {getDateWithTimeString(task.createdAt)}
-                    <br /> */}
-                    {getDateWithTimeTHString(task.createdAt)}
-                  </td>
+                  <td>{getDateWithTimeTHString(task.createdAt)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      )}
+        ) : (
+          <>
+            <p className="text-muted mt-3">📭 No tasks available</p>
+            <SectionLine />
+          </>
+        )}
+      </div>
+
+      <Button variant="danger" className="fw-bold" onClick={handleLogout}>
+        Logout
+      </Button>
     </div>
   );
 }

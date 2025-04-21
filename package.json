@@ -1,6 +1,5 @@
 {
-  "name": "shrimp-farm-web",
-  "description": "Shrimp Farm Management Platform - MVP",
+  "name": "react-firebase-auth-typescript",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "animate.css": "^4.1.1",
     "axios": "^1.8.4",
     "bootstrap": "^5.3.5",
     "firebase": "^11.6.0",

@@ -2,7 +2,7 @@ import { Button } from "react-bootstrap";
 import { BsEmojiFrown } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
-import "./NotFound.css";
+import "@css/NotFound.css";
 
 function NotFound() {
   return (

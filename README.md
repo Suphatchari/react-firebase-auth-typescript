@@ -66,20 +66,21 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ```
 📁 src/
 ├── assets/           # Static assets (logos, etc.)
-├── auth/             # Auth guards (e.g., ProtectedRoute)
-├── components/
-│   └── forms/        # LoginForm, RegisterForm
-├── config/           # Global config (e.g., env.ts)
-├── context/          # Global context (e.g., UserAuthContext)
+├── auth/             # Auth guards
+├── components/       # UI components     
+├── config/           # Global config
+├── context/          # Global context
+├── css/              # Standalone CSS files
 ├── helpers/          # Reusable utility functions
-├── pages/            # Main page views (Home, Login, Register, NotFound)
+├── pages/            # Main page views
 ├── router/           # AppRouter config for react-router
-├── services/         # API calls (e.g., fetchTaskList)
-├── types/            # Type definitions (e.g., Task, User)
+├── services/         # API calls
+├── App.css           # App component styles
 ├── App.tsx           # App entry component
-├── main.tsx          # Vite main bootstrap
+├── firebase.ts       # Firebase initialization
 ├── index.css         # Global styles & font setup
-└── firebase.ts       # Firebase initialization
+├── main.tsx          # Vite main bootstrap
+└── types.d.ts        # Type declarations
 ```
 
 ---
@@ -119,10 +120,10 @@ You can customize rules via `eslint.config.js`.
 | Formik + Yup       | Form handling + validation       |
 | React Toastify     | Toast notification system        |
 | React Icons        | Icon system                      |
-| Axios              | HTTP requests                    |
-| Noto Sans Thai     | Global Thai font styling         |
-| Noto Sans          | Global English font styling      |
-
+| Axios              | HTTP requests to external APIs   |
+| Vite Env Vars      | .env config for API base URL     |
+| Path Aliases       | Simplified imports using @/...   |
+| Noto Sans          | Global font styling              |
 ---
 
 ## 📁 License
